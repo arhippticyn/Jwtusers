@@ -12,3 +12,4 @@ export const RegisterUser = createAsyncThunk('register/RegisterUser', async (use
         return await rejectwithValue(error.message)
     }
 })
+
