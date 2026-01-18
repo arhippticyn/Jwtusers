@@ -21,6 +21,8 @@ class Users(Base):
     username: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(200))
     password: Mapped[str | None] = mapped_column()
+    provider: Mapped[str] = mapped_column(nullable=False)
+    provider_id: Mapped[str] = mapped_column(nullable=False)
 
 
 def get_db():

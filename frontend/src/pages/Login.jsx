@@ -2,17 +2,19 @@ import React from 'react';
 import styles from "../styles/Form.module.css";
 import { useDispatch } from "react-redux";
 import { LogIn } from '../redux/operation';
-
+import { FaGoogle } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 const Login = () => {
   const dispath = useDispatch()
 
-  const LogInSubmit = (e) => {
+  const LogInSubmit =  (e) => {
     e.preventDefault()
     const form = e.target
     const username = form.elements.username.value
     const password = form.elements.password.value
     dispath(LogIn({username: username, password: password}))
+
     form.reset()
   }
   return (
@@ -26,6 +28,11 @@ const Login = () => {
 
         <button type="submit" className={styles.btn}>Log in</button>
       </form>
+
+      <div style={{marginTop: '20px'}}>
+        <button onClick={() =>{window.location.href = 'http://127.0.0.1:8000/auth/google'}}>Log in with Google <FaGoogle /></button>
+        <button onClick={() => {window.location.href = 'http://127.0.0.1:8000/auth/github'}}>Log in with Github <FaGithub /></button>
+      </div>
     </div>
   )
 }

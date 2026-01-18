@@ -3,7 +3,7 @@ import axios from "axios";
 
 axios.defaults.baseURL = "http://127.0.0.1:8000";
 
-const setAuthHeader = (token) => {
+export const setAuthHeader = (token) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
@@ -13,21 +13,21 @@ const clearAuthHeader = () => {
 
 export const RegisterUser = createAsyncThunk(
   "auth/RegisterUser",
-  async (user, { rejectwithValue }) => {
+  async (user, { rejectWithValue }) => {
     try {
       const response = await axios.post("/register", user);
 
-      setAuthHeader(response.data);
+      setAuthHeader(response.data.access_token);
       return await response.data;
     } catch (error) {
-      return await rejectwithValue(error.message);
+      return await rejectWithValue(error.message);
     }
   },
 );
 
 export const LogIn = createAsyncThunk(
   "auth/LogIn",
-  async (creditials, { rejectwithValue }) => {
+  async (creditials, { rejectWithValue }) => {
     try {
       const data = new URLSearchParams();
       data.append("username", creditials.username);
@@ -40,7 +40,25 @@ export const LogIn = createAsyncThunk(
 
       return await response.data;
     } catch (error) {
-      return rejectwithValue(rejectwithValue(error.message));
+      return rejectWithValue((error.message));
     }
   },
 );
+
+export const GetUser = createAsyncThunk(
+  "auth/GetUser",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const token = getState().auth.token;
+      if (!token) return rejectWithValue("No token");
+
+      setAuthHeader(token);
+      const response = await axios.get("/user");
+
+      return await response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+

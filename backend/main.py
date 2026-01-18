@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
+from urllib.parse import urlencode
 from sqlalchemy.orm import Session
 from models import UserCreate, UserResponse
 from db import Users, get_db
@@ -154,12 +156,14 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
 
     email = user_info['email']
     username = user_info['email'].split('@')[0]
+    provider = "google"
+    provider_id = user_info['sub']
 
-    user = db.query(Users).filter(Users.email == email).first()
+    user = db.query(Users).filter(Users.provider == provider, Users.provider_id == provider_id).first()
 
 
     if not user:
-        user = Users(username=username, email=email, password=None)
+        user = Users(username=username, email=email, password=None, provider=provider, provider_id=provider_id)
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -171,7 +175,11 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
 
     access_token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITM)
 
-    return {'access_token': access_token, 'type': 'bearer'}
+    params = urlencode({'token': access_token})
+
+    redirect_url = f'http://localhost:5173/?{params}'
+
+    return RedirectResponse(url=redirect_url)
 
 @app.get('/auth/github/callback')
 async def github_callback(request: Request, db: Session = Depends(get_db)):
@@ -188,6 +196,9 @@ async def github_callback(request: Request, db: Session = Depends(get_db)):
 
 
     username = profile['login']
+    provider = 'github'
+    provider_id = str(profile['id'])
+    
 
     if email is None:
       raise HTTPException(
@@ -196,12 +207,12 @@ async def github_callback(request: Request, db: Session = Depends(get_db)):
     )
 
 
-    user = db.query(Users).filter(Users.email == email).first()
+    user = db.query(Users).filter(Users.provider == provider, Users.provider_id == provider_id).first()
 
 
 
     if not user:
-        user = Users(username=username, email=email, password=None)
+        user = Users(username=username, email=email, password=None, provider=provider, provider_id=provider_id)
         try:
             db.add(user)
             print("EMAIL:", email)
@@ -224,4 +235,8 @@ async def github_callback(request: Request, db: Session = Depends(get_db)):
 
     access_token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITM)
 
-    return {'access_token': access_token, 'type': 'bearer'}
+    params = urlencode({'token': access_token})
+
+    redirect_url = f'http://localhost:5173/?{params}'
+
+    return RedirectResponse(url=redirect_url)

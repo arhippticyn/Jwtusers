@@ -2,6 +2,8 @@ import React from "react";
 import styles from "../styles/Form.module.css";
 import { useDispatch } from "react-redux";
 import { RegisterUser } from "../redux/operation";
+import { NavLink } from "react-router-dom";
+
 const Register = () => {
   const dispath = useDispatch();
 
@@ -31,6 +33,8 @@ const Register = () => {
 
         <button className={styles.btn}>Register</button>
       </form>
+
+      <button><NavLink to='/login'>Log in</NavLink></button>
     </div>
   );
 };
