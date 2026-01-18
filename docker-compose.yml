@@ -6,10 +6,10 @@ services:
     container_name: db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: app
+      POSTGRES_PASSWORD: Arhip2010
+      POSTGRES_DB: dockerjwt
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

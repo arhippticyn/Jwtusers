@@ -1,21 +1,23 @@
 import React from "react";
-import styles from '../styles/Form.module.css'
+import styles from "../styles/Form.module.css";
 import { useDispatch } from "react-redux";
 import { RegisterUser } from "../redux/operation";
 const Register = () => {
-  const dispath = useDispatch()
+  const dispath = useDispatch();
 
   const RegisterSubmit = (e) => {
-    e.preventDefault()
-    const form = e.target
-    const username = form.elements.username.value
-    const password = form.elements.password.value
-    const email = form.elements.email.value
+    e.preventDefault();
+    const form = e.target;
+    const username = form.elements.username.value;
+    const password = form.elements.password.value;
+    const email = form.elements.email.value;
 
-    dispath(RegisterUser({username: username, password: password, email: email}))
+    dispath(
+      RegisterUser({ username: username, password: password, email: email })
+    );
 
-    form.reset()
-  }
+    form.reset();
+  };
   return (
     <div>
       <h2>Register</h2>
